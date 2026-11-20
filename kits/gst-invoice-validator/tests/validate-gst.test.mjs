@@ -101,6 +101,12 @@ test("garbage from the LLM does not crash the node", () => {
   }
 });
 
+test("no line items fails closed instead of passing unchecked", () => {
+  const r = run({ ...invoice(), line_items: [] }, BUYER);
+  assert.deepEqual(codes(r), ["NO_LINE_ITEMS"]);
+  assert.equal(r.itc_claimable, false);
+});
+
 test("hostile text in fields stays data", () => {
   const r = run({ ...invoice(), invoice_number: '"); process.exit(1); ("' }, '"); throw 1; ("');
   assert.ok(codes(r).includes("INVOICE_NUMBER_FORMAT"));

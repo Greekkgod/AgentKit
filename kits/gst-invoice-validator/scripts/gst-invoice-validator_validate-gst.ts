@@ -76,6 +76,10 @@ function validateGstInvoice(inv, ourGstin, today) {
   }
 
   const lines = Array.isArray(inv.line_items) ? inv.line_items : [];
+  if (!lines.length) {
+    // Fail closed: without line rates the tax charged cannot be verified.
+    add("NO_LINE_ITEMS", "error", "No line items were extracted, so the tax charged cannot be verified");
+  }
   let expectedTax = 0;
   lines.forEach((li, i) => {
     const rate = num(li.gst_rate);
